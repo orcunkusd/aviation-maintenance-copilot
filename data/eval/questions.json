@@ -6,5 +6,22 @@
   {"q": "Which gliders does AD 2007-26-15 apply to?", "key": "DG-500MB", "answerable": true},
   {"q": "What is the torque value for a Boeing 737 main wheel nut?", "key": "", "answerable": false},
   {"q": "What oil grade does a Lycoming O-360 engine require?", "key": "", "answerable": false},
-  {"q": "What is the inspection interval for Piper PA-28 wing spars?", "key": "", "answerable": false}
+  {"q": "What is the inspection interval for Piper PA-28 wing spars?", "key": "", "answerable": false},
+
+  {"q": "For a single row of rivets, how far apart should adjacent rivets be at minimum, expressed in rivet diameters?", "key": "3 times", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 159},
+  {"q": "Which rivets have to be kept packed in a cold medium or refrigerated until they are driven, because they would otherwise be too hard?", "key": "dry ice", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 159},
+  {"q": "In what type of area are blind rivets not allowed because of leakage concerns?", "key": "fluid-tight", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 159},
+  {"q": "What is the minimum wire diameter for the double-twist safety wiring method on parts with larger holes?", "key": ".032", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 328},
+  {"q": "How deep can a nick in an aluminum alloy tube be, relative to the wall thickness, and still be fixed by burnishing?", "key": "10 percent", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 439},
+  {"q": "A tire has a cut across a rib that goes deeper than what fraction of the remaining groove depth before it must be removed?", "key": "50 percent", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 430},
+  {"q": "What is the highest torque allowed on #8-32 screws when mounting an antenna?", "key": "20 in", "answerable": true, "source": "AC_43.13-2B.pdf", "page": 28},
+  {"q": "How tall may a ski pedestal be compared with the static rolling radius of the standard tire?", "key": "130 percent", "answerable": true, "source": "AC_43.13-2B.pdf", "page": 39},
+  {"q": "What is the allowed maximum gap between the ski pedestal hub and the axle?", "key": "0.020", "answerable": true, "source": "AC_43.13-2B.pdf", "page": 39},
+  {"q": "How steep may grain deviation be in the outer part of a solid wood spar?", "key": "1 in 15", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 48},
+  {"q": "How much space should be left around a plastic windshield in its channel to allow for expansion and contraction?", "key": "1/4-inch", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 139},
+  {"q": "What can be used to put out a fire in magnesium shavings?", "key": "talc", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 289},
+  {"q": "Which wire diameter may be used double-strand on parts with a nominal hole between .045 and .062 inch?", "key": ".020", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 328},
+
+  {"q": "What is the recommended torque for the propeller bolts on a Cessna 172?", "key": "", "answerable": false},
+  {"q": "How many flight hours between overhauls does a Pratt & Whitney PW4000 engine require?", "key": "", "answerable": false}
 ]
