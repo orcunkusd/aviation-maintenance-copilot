@@ -1,0 +1,10 @@
+[
+  {"q": "Within how many hours must the Cessna 172 parachute system AD be complied with?", "key": "25 hours", "answerable": true},
+  {"q": "Which STC covers the BRS-172 Parachute System?", "key": "SA01679CH", "answerable": true},
+  {"q": "Which STC covers the BRS-182 Parachute System?", "key": "SA01999CH", "answerable": true},
+  {"q": "What is the AD number of the Cessna 172 and 182 BRS parachute system directive?", "key": "2008-02-18", "answerable": true},
+  {"q": "Which gliders does AD 2007-26-15 apply to?", "key": "DG-500MB", "answerable": true},
+  {"q": "What is the torque value for a Boeing 737 main wheel nut?", "key": "", "answerable": false},
+  {"q": "What oil grade does a Lycoming O-360 engine require?", "key": "", "answerable": false},
+  {"q": "What is the inspection interval for Piper PA-28 wing spars?", "key": "", "answerable": false}
+]
