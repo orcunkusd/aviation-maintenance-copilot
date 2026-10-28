@@ -1,13 +1,7 @@
-import os, sys
-from google import genai
-from google.genai import types
+import sys
+from llm import generate
 from retriever import HybridRetriever
 
-MODEL = "gemini-2.5-flash"
-client = genai.Client(
-    api_key=os.environ["GEMINI_API_KEY"],
-    http_options=types.HttpOptions(timeout=60000),
-)
 retriever = HybridRetriever()
 
 SYSTEM = (
@@ -18,18 +12,16 @@ SYSTEM = (
     "Do not use outside knowledge. Keep answers short."
 )
 
+
 def answer(question, k=5):
     hits = retriever.hybrid_search(question, k=k)
     context = "\n\n".join(
         f"[{i+1}] (source: {h['meta']['source']}, page {h['meta']['page']})\n{h['text']}"
         for i, h in enumerate(hits)
     )
-    resp = client.models.generate_content(
-        model=MODEL,
-        contents=f"Context passages:\n{context}\n\nQuestion: {question}",
-        config=types.GenerateContentConfig(system_instruction=SYSTEM, temperature=0),
-    )
-    return resp.text, hits
+    text = generate(SYSTEM, f"Context passages:\n{context}\n\nQuestion: {question}")
+    return text, hits
+
 
 if __name__ == "__main__":
     q = " ".join(sys.argv[1:])
