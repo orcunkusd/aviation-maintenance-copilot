@@ -1,12 +1,10 @@
 import base64
-import sys
 import json
 from pathlib import Path
 
 import streamlit as st
 
-sys.path.insert(0, str(Path(__file__).parent))
-from cloud import cloud_backend as be
+from src import cloud_backend as be
 
 ROOT = Path(__file__).parent
 st.set_page_config(page_title="Aviation Maintenance Copilot", page_icon="✈️", layout="wide",
@@ -25,15 +23,20 @@ h1 {font-size:clamp(1.6rem,4.5vw,2.5rem)!important; letter-spacing:-.02em; margi
 @media (max-width:640px){ .block-container{padding:.6rem .6rem 1.5rem} }
 </style>""", unsafe_allow_html=True)
 
-GREETING = "Hi, I'm Aero. Move your mouse around, I'll keep an eye on you. Press the button and I'll walk you through this project."
+GREETING = "Hi, I'm Aero, your guide. Let me walk you through this project and every tool behind it before you ask your first question."
 LINES = [
-    {"emote": "Wave", "mood": None, "text": "I'm the guide to the Aviation Maintenance Copilot: a question answering system for FAA maintenance documents."},
-    {"emote": "ThumbsUp", "mood": None, "text": "The problem: a technician has thousands of pages of advisory circulars and airworthiness directives. Finding the right paragraph is slow, and a wrong answer is expensive."},
-    {"emote": "ThumbsUp", "mood": None, "text": "The system reads the PDFs, splits them into chunks, and indexes them twice: by meaning with embeddings, and by exact words with BM25. Results are merged with reciprocal rank fusion."},
-    {"emote": None, "mood": "Surprised", "text": "Every answer cites its source page. If the documents don't contain the answer, it refuses instead of guessing. That is the safety-critical part."},
-    {"emote": "ThumbsUp", "mood": None, "text": "I measured it, not just built it. On a held-out question set, I report Hit at 5 and mean reciprocal rank, and I tested a cross-encoder reranker and found where it helps and where it only adds latency."},
-    {"emote": "ThumbsUp", "mood": None, "text": "Cloud side: Azure AI Search holds the index on the free tier, the language model is Gemini's free tier, and this page runs on Streamlit Community Cloud. Total cost: zero."},
-    {"emote": "Wave", "mood": None, "text": "Now try it. Ask a maintenance question on the right, or pick an example."},
+    {"tag": "The problem", "emote": "Wave", "mood": None, "text": "Hi, I'm Aero. This is the Aviation Maintenance Copilot. A technician has thousands of pages of FAA advisory circulars. Finding the right paragraph is slow, and a wrong answer is expensive."},
+    {"tag": "The goal", "emote": "ThumbsUp", "mood": None, "text": "The goal: ask a question in plain English and get a short answer with the exact source page, or an honest refusal when the documents do not say."},
+    {"tag": "Data: pypdf", "emote": None, "mood": None, "text": "First, the data. The FAA documents are public PDFs. A Python library called pypdf extracts the text page by page, and I split it into overlapping chunks of about one thousand characters so no fact is cut in half."},
+    {"tag": "Embeddings", "emote": "ThumbsUp", "mood": None, "text": "Each chunk is turned into numbers that capture its meaning, using the sentence-transformers model MiniLM. That lets the system find passages that mean the same thing even when the words differ."},
+    {"tag": "Chroma", "emote": None, "mood": None, "text": "Those vectors are stored in Chroma, a local vector database, which keeps development free and fast."},
+    {"tag": "BM25", "emote": None, "mood": None, "text": "Meaning search alone misses exact terms like part numbers or table names. So I also run BM25, a classic keyword search, and merge both rankings with reciprocal rank fusion. That is called hybrid retrieval."},
+    {"tag": "Reranker", "emote": "ThumbsUp", "mood": None, "text": "I also tested a cross-encoder reranker that re-reads the top candidates. It improved ranking quality but added several seconds of delay, so I kept it optional. Measuring that trade-off was the point."},
+    {"tag": "Azure AI Search", "emote": None, "mood": None, "text": "For the cloud, the same chunks are uploaded to Azure AI Search on the free tier. I checked that it returns the same results as my local search, so moving to the cloud did not lose quality."},
+    {"tag": "Gemini", "emote": None, "mood": None, "text": "The answer is written by Google's Gemini model on its free tier. It may only use the retrieved passages, must cite them by number, and has to say so when the answer is not there."},
+    {"tag": "Evaluation", "emote": None, "mood": "Surprised", "text": "I measured everything. I wrote easy, hard, and held-out question sets, and track Hit at 5, Hit at 10 and mean reciprocal rank. The held-out set was frozen first, so I could not tune on it."},
+    {"tag": "Hosting", "emote": "ThumbsUp", "mood": None, "text": "The code lives on GitHub, was built in GitHub Codespaces, and this page runs on Streamlit Community Cloud. The total cost is zero euros."},
+    {"tag": "Your turn", "emote": "Wave", "mood": None, "text": "That is the whole stack. Now it is your turn. Pick an example on the right, or ask your own maintenance question."},
 ]
 
 
