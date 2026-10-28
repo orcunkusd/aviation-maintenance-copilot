@@ -1,6 +1,6 @@
 """Agentic RAG with LangGraph.
 
-plan      split the question into 1-3 short search queries (LLM)
+plan      the original question + up to 2 LLM-written search queries
 retrieve  hybrid search for each query, merge and de-duplicate
 grade     are the passages enough to answer? if not, propose a better query (LLM)
           -> one retry at most
@@ -18,6 +18,7 @@ from typing import List, TypedDict
 from langgraph.graph import END, StateGraph
 
 from answer import SYSTEM, build_context
+from citations import cited_numbers
 
 MAX_RETRIES = 1
 MAX_PASSAGES = 6
@@ -71,7 +72,7 @@ def merge_hits(per_query_hits, limit=MAX_PASSAGES):
 
 def check_citations(text, n_passages):
     """True if the answer cites at least one passage and every [n] is a real passage number."""
-    nums = [int(x) for x in re.findall(r"\[(\d+)\]", text or "")]
+    nums = cited_numbers(text)
     if not nums:
         return "could not find" in (text or "").lower()   # a refusal needs no citation
     return all(1 <= n <= n_passages for n in nums)
@@ -86,8 +87,10 @@ def build_graph(retrieve, llm, k=5):
 
     def plan(state):
         raw = _call(state, PLAN_SYSTEM, state["question"])
-        queries = [q for q in parse_json(raw, {}).get("queries", []) if isinstance(q, str) and q.strip()][:3]
-        queries = queries or [state["question"]]
+        planned = [q.strip() for q in parse_json(raw, {}).get("queries", []) if isinstance(q, str) and q.strip()]
+        # always keep the user's own wording: LLM rewrites can drop the exact words keyword search needs
+        queries = [state["question"]] + [q for q in planned if q != state["question"]]
+        queries = queries[:3]
         return {"queries": queries, "llm_calls": state["llm_calls"],
                 "trace": state.get("trace", []) + [f"plan: {queries}"]}
 

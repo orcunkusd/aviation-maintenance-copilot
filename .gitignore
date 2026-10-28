@@ -228,3 +228,4 @@ data/eval/cache.json
 
 .streamlit/secrets.toml.streamlit/secrets.toml
 .venv/
+data/eval/compare_cache.json

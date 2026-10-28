@@ -1,0 +1,27 @@
+{
+ "summaries": {
+  "baseline": {
+   "n_answerable": 3,
+   "n_unanswerable": 0,
+   "retrieval_hit": 0.667,
+   "citation_correct": 0.667,
+   "false_refusal": 0.333,
+   "correct_refusal": null,
+   "avg_llm_calls": 1.0,
+   "avg_seconds": 21.577
+  },
+  "agent_v2": {
+   "n_answerable": 3,
+   "n_unanswerable": 0,
+   "retrieval_hit": 0.667,
+   "citation_correct": 0.667,
+   "false_refusal": 0.333,
+   "correct_refusal": null,
+   "avg_llm_calls": 3.667,
+   "avg_seconds": 60.657
+  }
+ },
+ "ragas": {},
+ "model": "gemini-3.5-flash-lite",
+ "date": "2026-10-28"
+}

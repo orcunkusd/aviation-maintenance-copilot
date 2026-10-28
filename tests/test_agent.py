@@ -53,7 +53,7 @@ def test_retry_with_better_query_then_answer():
     llm = FakeLLM(['{"queries": ["bad"]}', '{"sufficient": false, "better_query": "better words"}',
                    '{"sufficient": true}', "Answer [1]."])
     out = run_agent("q?", retrieve, llm)
-    assert seen == ["bad", "better words"]
+    assert seen == ["q?", "bad", "better words"]
     assert out["llm_calls"] == 4 and out["retries"] == 1
 
 
@@ -80,3 +80,10 @@ def test_bad_llm_json_falls_back_to_original_question():
 def test_invalid_citation_is_flagged():
     llm = FakeLLM(['{"queries": ["a"]}', '{"sufficient": true}', "Made up [7]."])
     assert run_agent("q?", lambda q, k: [hit(1)], llm)["citations_ok"] is False
+
+
+def test_original_question_is_always_searched_first():
+    seen = []
+    llm = FakeLLM(['{"queries": ["rewritten one", "rewritten two", "rewritten three"]}', '{"sufficient": true}', "A [1]."])
+    run_agent("original words", lambda q, k: seen.append(q) or [hit(1)], llm)
+    assert seen == ["original words", "rewritten one", "rewritten two"]
