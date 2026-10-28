@@ -4,7 +4,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from src import cloud_backend as be
+from cloud import cloud_backend as be
 
 ROOT = Path(__file__).parent
 st.set_page_config(page_title="Aviation Maintenance Copilot", page_icon="✈️", layout="wide",
