@@ -9,7 +9,7 @@ def norm(s):
     return " ".join(s.replace("–", "-").replace("‑", "-").lower().split())
 
 
-rows = json.load(open("data/eval/questions.json"))
+rows = json.load(open(os.environ.get("EVAL_FILE", "data/eval/questions.json")))
 cache = json.load(open(CACHE)) if os.path.exists(CACHE) else {}
 
 

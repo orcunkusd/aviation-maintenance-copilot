@@ -14,6 +14,9 @@ def norm(s):
 
 
 local = HybridRetriever()
+from rerank_retriever import RerankRetriever
+
+rr = RerankRetriever(local)
 az = SearchClient(
     os.environ["AZURE_SEARCH_ENDPOINT"],
     "faa-docs",
@@ -42,6 +45,9 @@ METHODS = {
     "Local keyword (BM25)": lambda q: from_ids(local.keyword_search(q, 10)),
     "Local vector (MiniLM)": lambda q: from_ids(local.vector_search(q, 10)),
     "Local hybrid (RRF)": lambda q: from_ids([h["id"] for h in local.hybrid_search(q, k=10)]),
+    "Local hybrid + rerank": lambda q: [
+        (h["text"], h["meta"]["source"], h["meta"]["page"]) for h in rr.search(q, k=10)
+    ],
     "Azure keyword": lambda q: az_rows(az.search(search_text=q, top=10, select=FIELDS)),
     "Azure vector": lambda q: az_rows(
         az.search(search_text=None, vector_queries=[vec_query(q)], top=10, select=FIELDS)
@@ -51,13 +57,14 @@ METHODS = {
     ),
 }
 
-rows = [r for r in json.load(open("data/eval/questions.json")) if r["answerable"]]
+rows = [r for r in json.load(open(os.environ.get("EVAL_FILE", "data/eval/questions.json"))) if r["answerable"]]
 
 
 def rank_of(results, row):
     key = norm(row["key"])
     for i, (text, source, page) in enumerate(results, start=1):
-        right_place = not row.get("page") or (page == row["page"] and source == row["source"])
+        pages = row.get("pages") or ([row["page"]] if row.get("page") else [])
+        right_place = not pages or (page in pages and source == row["source"])
         if key in norm(text) and right_place:
             return i
     return None

@@ -1,3 +1,4 @@
+import os
 import json
 from retriever import HybridRetriever
 
@@ -7,7 +8,7 @@ def norm(s):
 
 
 r = HybridRetriever()
-rows = json.load(open("data/eval/questions.json"))
+rows = json.load(open(os.environ.get("EVAL_FILE", "data/eval/questions.json")))
 n = hit5 = hit10 = 0
 
 for row in rows:
@@ -17,8 +18,9 @@ for row in rows:
     hits = r.hybrid_search(row["q"], k=10)
     rank = None
     for i, h in enumerate(hits, start=1):
-        right_place = not row.get("page") or (
-            h["meta"]["page"] == row["page"] and h["meta"]["source"] == row["source"]
+        pages = row.get("pages") or ([row["page"]] if row.get("page") else [])
+        right_place = not pages or (
+            h["meta"]["page"] in pages and h["meta"]["source"] == row["source"]
         )
         if key in norm(h["text"]) and right_place:
             rank = i
