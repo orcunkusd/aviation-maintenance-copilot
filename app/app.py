@@ -1,10 +1,12 @@
 import base64
+import sys
 import json
 from pathlib import Path
 
 import streamlit as st
 
-from src import cloud_backend as be
+sys.path.insert(0, str(Path(__file__).parent))
+from cloud import cloud_backend as be
 
 ROOT = Path(__file__).parent
 st.set_page_config(page_title="Aviation Maintenance Copilot", page_icon="✈️", layout="wide",
