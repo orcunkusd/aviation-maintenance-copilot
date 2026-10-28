@@ -1,0 +1,12 @@
+.git
+.venv
+.github
+data
+app
+src
+scripts
+tests
+**/__pycache__
+*.md
+.env
+.streamlit
