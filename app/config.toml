@@ -1,0 +1,11 @@
+[theme]
+base = "dark"
+primaryColor = "#5ad1ff"
+backgroundColor = "#0b1220"
+secondaryBackgroundColor = "#121c33"
+textColor = "#eaf1ff"
+
+[client]
+toolbarMode = "minimal"
+[server]
+enableXsrfProtection = true

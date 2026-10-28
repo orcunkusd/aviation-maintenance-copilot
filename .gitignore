@@ -225,3 +225,5 @@ data/processed/
 data/chroma/
 
 data/eval/cache.json
+
+.streamlit/secrets.toml.streamlit/secrets.toml

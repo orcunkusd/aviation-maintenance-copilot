@@ -1,0 +1,14 @@
+[
+  {"q": "After tensioning a control cable, how much of the adjuster's threaded end may still be visible on each side of its barrel?", "key": "more than three", "answerable": true, "source": "AC_43.13-1B.pdf", "pages": [349, 350, 351], "type": "paraphrase"},
+  {"q": "How much resistance to turning must a reused self-locking nut on a 5/8 fine-thread bolt still show?", "key": "18 inch-pounds", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 324, "type": "table"},
+  {"q": "If a new fabric patch would end very close to a rib-laced member, how far beyond that member should it extend?", "key": "3 inches", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 113, "type": "paraphrase"},
+  {"q": "How much of a bolt must be visible through the nut after assembly?", "key": "one thread", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 318, "type": "paraphrase"},
+  {"q": "Which release film is the right choice for a composite repair cured at up to 450 degrees Fahrenheit?", "key": "polyvinyl fluoride", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 122, "type": "paraphrase"},
+  {"q": "What small hole is drilled at the end of a split in a steel tube frame member to keep it from spreading?", "key": "no. 40", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 205, "type": "vocabulary"},
+  {"q": "What corrosion-proofing process leaves aluminum with a paint-friendly oxide film?", "key": "anodiz", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 282, "type": "vocabulary"},
+  {"q": "How far must finishing tape over rib stitching reach beyond each end of the reinforcing tapes?", "key": "1/2 inch", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 100, "type": "vocabulary"},
+  {"q": "How much space must be kept between breathing-gas plumbing and a flexible moving control cable?", "key": "2-inch", "answerable": true, "source": "AC_43.13-2B.pdf", "page": 51, "type": "distractor"},
+  {"q": "What is the smallest ventilation airflow allowed for a battery compartment?", "key": "0.040", "answerable": true, "source": "AC_43.13-2B.pdf", "page": 110, "type": "paraphrase"},
+  {"q": "What is the approved torque for the main rotor retention nut on a Bell 206?", "key": "", "answerable": false},
+  {"q": "What overhaul interval applies to an Airbus A320 main landing gear?", "key": "", "answerable": false}
+]

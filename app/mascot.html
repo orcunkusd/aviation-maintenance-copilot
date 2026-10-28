@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root { --text:#eaf1ff; --muted:#9db0d3; --accent:#5ad1ff; --panel:rgba(9,16,32,.72); }
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; background:transparent; overflow:hidden;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  #wrap { position:relative; width:100%; height:100%; border-radius:22px; overflow:hidden;
+    background:
+      radial-gradient(90% 60% at 50% 18%, rgba(90,209,255,.20) 0%, rgba(90,209,255,0) 60%),
+      radial-gradient(120% 90% at 50% 0%, #1b2d57 0%, #0a1224 72%);
+    border:1px solid rgba(255,255,255,.08); box-shadow: 0 18px 50px rgba(3,8,20,.45) inset; }
+  canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  #fallback { position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+    font-size:84px; color:var(--accent); opacity:.9; }
+  #badge { position:absolute; top:12px; left:14px; color:var(--muted); font-size:12px; letter-spacing:.14em;
+    text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+  #badge i { width:8px; height:8px; border-radius:50%; background:#3ddc97; box-shadow:0 0 10px #3ddc97; display:inline-block; }
+  #panel { position:absolute; left:12px; right:12px; bottom:12px; padding:12px 14px 10px; color:var(--text);
+    background:var(--panel); border:1px solid rgba(255,255,255,.14); border-radius:16px;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  #name { font-weight:700; font-size:12px; color:var(--accent); letter-spacing:.08em; text-transform:uppercase; margin-bottom:4px; }
+  #text { font-size:14.5px; line-height:1.45; min-height:3.9em; }
+  #controls { display:flex; align-items:center; gap:8px; margin-top:8px; }
+  button { font:inherit; color:var(--text); background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
+    border-radius:10px; padding:6px 10px; cursor:pointer; font-size:13px; line-height:1; }
+  button:hover { background:rgba(255,255,255,.16); }
+  button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  button.primary { background:linear-gradient(135deg,#2bb3f3,#5a7dff); border-color:transparent; font-weight:600; padding:7px 14px; }
+  #dots { display:flex; gap:5px; margin-left:auto; align-items:center; }
+  #dots span { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.25); transition:all .2s; }
+  #dots span.on { background:var(--accent); width:18px; border-radius:6px; }
+  @media (max-width:420px){ #text{font-size:13.5px} #badge{display:none} }
+  @media (prefers-reduced-motion: reduce){ #dots span{transition:none} }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div id="fallback" aria-hidden="true">&#9992;</div>
+  <div id="badge"><i></i>Project guide</div>
+  <div id="panel" role="region" aria-label="Project guide">
+    <div id="name">Aero</div>
+    <div id="text" aria-live="polite"></div>
+    <div id="controls">
+      <button id="prev" aria-label="Previous">&#9664;</button>
+      <button id="play" class="primary">&#9654; Explain the project</button>
+      <button id="next" aria-label="Next">&#9654;</button>
+      <button id="voice" aria-pressed="true" aria-label="Toggle voice" title="Voice on/off">&#128266;</button>
+      <div id="dots" aria-hidden="true"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- guide logic (works even if 3D fails) ---------- */
+const LINES = __LINES__;
+const GREETING = __GREETING__;
+const $ = (id) => document.getElementById(id);
+const state = { i: -1, playing: false, voice: true, typing: null, speaking: false };
+window.__mouse = { x: null, y: null, t: 0 };
+
+function emit(name, detail) { window.dispatchEvent(new CustomEvent(name, { detail })); }
+
+/* mouse position from this frame AND from the parent Streamlit page (same origin) */
+function track(doc, offsetFn) {
+  doc.addEventListener('mousemove', (e) => {
+    const o = offsetFn();
+    window.__mouse = { x: e.clientX + o.x, y: e.clientY + o.y, t: performance.now() };
+  }, { passive: true });
+  doc.addEventListener('touchmove', (e) => {
+    const t = e.touches[0]; if (!t) return; const o = offsetFn();
+    window.__mouse = { x: t.clientX + o.x, y: t.clientY + o.y, t: performance.now() };
+  }, { passive: true });
+}
+track(document, () => ({ x: 0, y: 0 }));
+try {
+  if (window.parent && window.parent !== window && window.parent.document) {
+    track(window.parent.document, () => {
+      const r = window.frameElement ? window.frameElement.getBoundingClientRect() : { left: 0, top: 0 };
+      return { x: -r.left, y: -r.top };
+    });
+  }
+} catch (err) { /* cross-origin: only track inside this frame */ }
+
+const dots = $('dots');
+LINES.forEach(() => { const s = document.createElement('span'); dots.appendChild(s); });
+function setDots() { [...dots.children].forEach((d, k) => d.classList.toggle('on', k === state.i)); }
+
+function type(text, speed, done) {
+  clearInterval(state.typing);
+  const el = $('text'); el.textContent = '';
+  let n = 0;
+  state.typing = setInterval(() => {
+    n += 2; el.textContent = text.slice(0, n);
+    if (n >= text.length) { clearInterval(state.typing); el.textContent = text; done && done(); }
+  }, speed);
+}
+
+function pickVoice() {
+  const vs = speechSynthesis.getVoices();
+  return vs.find(v => /en-(US|GB)/i.test(v.lang) && /(Google|Samantha|Daniel|Aria|Jenny|Natural)/i.test(v.name))
+      || vs.find(v => /^en/i.test(v.lang)) || null;
+}
+
+function speak(text, onend) {
+  if (!state.voice || !('speechSynthesis' in window)) return false;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const v = pickVoice(); if (v) u.voice = v;
+    u.rate = 1.02; u.pitch = 1.0;
+    u.onstart = () => { state.speaking = true; emit('mascot-speaking', true); };
+    u.onend = u.onerror = () => { state.speaking = false; emit('mascot-speaking', false); onend && onend(); };
+    speechSynthesis.speak(u);
+    return true;
+  } catch (e) { return false; }
+}
+
+function show(i) {
+  state.i = Math.max(0, Math.min(LINES.length - 1, i));
+  const line = LINES[state.i];
+  setDots();
+  emit('mascot-emote', line);
+  const next = () => { if (state.playing && state.i < LINES.length - 1) setTimeout(() => state.playing && show(state.i + 1), 700);
+                       else if (state.i >= LINES.length - 1) { state.playing = false; $('play').innerHTML = '&#8635; Replay'; } };
+  const spoke = speak(line.text, next);
+  type(line.text, spoke ? 22 : 14, () => { if (!spoke) setTimeout(() => state.playing && next(), 2200 + line.text.length * 18); });
+}
+
+$('play').addEventListener('click', () => {
+  if (state.playing) { state.playing = false; speechSynthesis.cancel(); $('play').innerHTML = '&#9654; Continue'; emit('mascot-speaking', false); return; }
+  state.playing = true; $('play').innerHTML = '&#10074;&#10074; Pause';
+  show(state.i >= LINES.length - 1 ? 0 : Math.max(0, state.i + (state.i < 0 ? 1 : 0)));
+});
+$('next').addEventListener('click', () => { speechSynthesis.cancel(); show(state.i + 1); });
+$('prev').addEventListener('click', () => { speechSynthesis.cancel(); show(state.i - 1); });
+$('voice').addEventListener('click', () => {
+  state.voice = !state.voice; $('voice').setAttribute('aria-pressed', state.voice);
+  $('voice').innerHTML = state.voice ? '&#128266;' : '&#128263;'; if (!state.voice) { speechSynthesis.cancel(); emit('mascot-speaking', false); }
+});
+
+if ('speechSynthesis' in window) { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => {}; }
+else { $('voice').style.display = 'none'; }
+type(GREETING, 14);
+emit('mascot-emote', { emote: 'Wave', mood: null });
+window.addEventListener('pagehide', () => { try { speechSynthesis.cancel(); } catch (e) {} });
+</script>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+
+<script type="module">
+/* ---------- 3D scene ---------- */
+const MODEL_B64 = "__MODEL__";
+try {
+  const THREE = await import('three');
+  const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+  const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
+
+  const canvas = document.getElementById('gl');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+  const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
+
+  const key = new THREE.DirectionalLight(0xffffff, 2.2);
+  key.position.set(3, 6, 5); key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 6; key.shadow.bias = -0.0004;
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0x5ad1ff, 2.4); rim.position.set(-5, 3, -4); scene.add(rim);
+  scene.add(new THREE.HemisphereLight(0x9db6ff, 0x101830, 0.6));
+
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(6, 64), new THREE.ShadowMaterial({ opacity: 0.35 }));
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+
+  const buf = await (await fetch('data:model/gltf-binary;base64,' + MODEL_B64)).arrayBuffer();
+  const gltf = await new Promise((res, rej) => new GLTFLoader().parse(buf, '', res, rej));
+  const model = gltf.scene; scene.add(model); window.__model = model;
+  model.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.frustumCulled = false; } });
+
+  /* frame the model: full body, slightly above centre so the text panel has room */
+  model.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(model);
+  const size = box.getSize(new THREE.Vector3()); const centre = box.getCenter(new THREE.Vector3());
+  model.position.y -= box.min.y;                       // stand on the floor
+  const H = size.y;
+  function frame() {
+    const w = canvas.clientWidth || 400, h = canvas.clientHeight || 500;
+    renderer.setSize(w, h, false); camera.aspect = w / h;
+    const fovV = THREE.MathUtils.degToRad(camera.fov);
+    const needH = H * 1.9, needW = size.x * 2.0 / camera.aspect;
+    const dist = Math.max(needH, needW) / (2 * Math.tan(fovV / 2));
+    camera.position.set(0, H * 0.5, dist);
+    camera.lookAt(0, H * 0.36, 0);                     // looking a bit lower => figure sits higher
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(frame).observe(canvas); frame();
+
+  /* animation */
+  gltf.animations.forEach((c) => { c.tracks = c.tracks.filter((t) => !/^(Neck|Head)\./.test(t.name)); });  // head is driven by the cursor only
+  const mixer = new THREE.AnimationMixer(model); window.__mixer = mixer; window.__camera = camera;
+  const actions = {}; gltf.animations.forEach((c) => actions[c.name] = mixer.clipAction(c));
+  window.__actions = actions; let current = actions['Idle']; current.play();
+  const oneShot = ['Wave', 'ThumbsUp', 'Jump'];
+  function emote(name) {
+    const a = actions[name]; if (!a) return;
+    a.reset(); a.setLoop(THREE.LoopOnce, 1); a.clampWhenFinished = true;
+    a.enabled = true; a.crossFadeFrom(current, 0.25, true); a.play();
+    const back = () => { mixer.removeEventListener('finished', onFin); current.reset(); current.enabled = true; current.crossFadeFrom(a, 0.3, true); current.play(); };
+    const onFin = (e) => { if (e.action === a) back(); };
+    mixer.addEventListener('finished', onFin);
+  }
+
+  /* facial morphs on the head mesh (Angry / Surprised / Sad) */
+  let faceMesh = null; model.traverse((o) => { if (o.isMesh && o.morphTargetDictionary && o.morphTargetDictionary.Surprised !== undefined) faceMesh = o; });
+  let mood = { name: null, v: 0, target: 0 };
+  function setMood(n) { mood.name = n; mood.target = n ? 0.55 : 0; }
+
+  let neck = null, head = null;
+  model.traverse((o) => { if (o.isBone && o.name === 'Neck') neck = o; if (o.isBone && o.name === 'Head') head = o; });
+
+  const bind = {}; const animated = {};
+  [neck, head].forEach((b) => { if (b) { bind[b.name] = b.quaternion.clone();
+    animated[b.name] = gltf.animations.some((c) => c.tracks.some((t) => t.name === b.name + '.quaternion')); } });
+  window.__animated = animated;
+
+  window.addEventListener('mascot-emote', (e) => {
+    const d = e.detail || {};
+    if (d.emote && oneShot.includes(d.emote)) emote(d.emote);
+    setMood(d.mood || null);
+  });
+  let speaking = false; window.addEventListener('mascot-speaking', (e) => { speaking = !!e.detail; });
+
+  /* look-at: rotate neck+head in WORLD space so it works regardless of bone axes */
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const look = { yaw: 0, pitch: 0 };
+    const AX = window.__AX = { yaw: new THREE.Vector3(0, 1, 0), pitch: new THREE.Vector3(1, 0, 0), ys: 1, ps: 1 };
+  const qa = new THREE.Quaternion(), qb = new THREE.Quaternion();
+  function rotateLocal(bone, yaw, pitch) {                 // offset in the bone's own space
+    qa.setFromAxisAngle(AX.yaw, yaw * AX.ys); qb.setFromAxisAngle(AX.pitch, pitch * AX.ps);
+    bone.quaternion.multiply(qa).multiply(qb);
+  }
+  const headPos = new THREE.Vector3(), v = new THREE.Vector3();
+  const clock = new THREE.Clock(); let visible = true;
+  new IntersectionObserver((en) => { visible = en[0].isIntersecting; }, { threshold: 0.01 }).observe(canvas);
+
+  renderer.setAnimationLoop(() => {
+    if (!visible || document.hidden) return;
+    const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+    mixer.update(dt);
+
+    /* where is the cursor relative to the head, on screen? */
+    let ty = 0, tp = 0;
+    const m = window.__mouse; const fresh = m && m.x !== null && (performance.now() - m.t) < 6000;
+    if (head && fresh) {
+      head.getWorldPosition(headPos); v.copy(headPos).project(camera);
+      const r = canvas.getBoundingClientRect();
+      let fx = 0, fy = 0;
+      try { const fr = window.frameElement ? window.frameElement.getBoundingClientRect() : { left: 0, top: 0 };
+            fx = fr.left; fy = fr.top; } catch (err) {}
+      const hx = fx + r.left + (v.x * 0.5 + 0.5) * r.width;
+      const hy = fy + r.top + (-v.y * 0.5 + 0.5) * r.height;
+      const vw = (window.parent && window.parent.innerWidth) || window.innerWidth;
+      const vh = (window.parent && window.parent.innerHeight) || window.innerHeight;
+      const dx = THREE.MathUtils.clamp((m.x - hx) / (vw * 0.35), -1, 1);
+      const dy = THREE.MathUtils.clamp((m.y - hy) / (vh * 0.35), -1, 1);
+      ty = dx * 0.7; tp = dy * 0.38;
+    } else if (!reduce) {                                       // idle: slow, gentle sway
+      ty = Math.sin(t * 0.5) * 0.35; tp = Math.sin(t * 0.37 + 1) * 0.08;
+    }
+    if (speaking && !reduce) tp += Math.sin(t * 9) * 0.035 + Math.sin(t * 5.3) * 0.02;  // talking nod
+    const k = 1 - Math.exp(-dt * 7);
+    look.yaw += (ty - look.yaw) * k; look.pitch += (tp - look.pitch) * k;
+    if (neck && head && !window.__noLook) {
+      for (const b of [neck, head]) if (!animated[b.name]) b.quaternion.copy(bind[b.name]);
+      rotateLocal(neck, look.yaw * 0.4, look.pitch * 0.4); rotateLocal(head, look.yaw * 0.6, look.pitch * 0.6); }
+
+    if (faceMesh) {
+      mood.v += (mood.target - mood.v) * (1 - Math.exp(-dt * 6));
+      for (const n of ['Angry', 'Surprised', 'Sad']) faceMesh.morphTargetInfluences[faceMesh.morphTargetDictionary[n]] = (n === mood.name) ? mood.v : faceMesh.morphTargetInfluences[faceMesh.morphTargetDictionary[n]] * 0.9;
+    }
+    renderer.render(scene, camera);
+  });
+  window.__mascotReady = true;
+} catch (err) {
+  console.error('3D mascot failed:', err);
+  document.getElementById('gl').style.display = 'none';
+  document.getElementById('fallback').style.display = 'flex';
+}
+</script>
+</body>
+</html>
