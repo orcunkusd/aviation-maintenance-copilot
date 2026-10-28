@@ -15,6 +15,6 @@ jobs:
       - name: Install test dependencies
         run: pip install -r requirements-dev.txt
       - name: Syntax check
-        run: python -m compileall -q src app
+        run: python -m compileall -q src app api
       - name: Unit tests
         run: pytest -q

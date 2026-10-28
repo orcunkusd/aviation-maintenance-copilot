@@ -1,0 +1,75 @@
+"""Cloud backend for the API: Azure AI Search (retrieval) + Gemini (generation).
+
+All settings come from environment variables so the same code runs locally,
+in Docker and on Azure Container Apps.
+"""
+import datetime as dt
+import os
+import threading
+
+import requests
+
+SYSTEM = (
+    "You are an aviation maintenance documentation assistant. "
+    "Answer ONLY using the numbered context passages. "
+    "Cite every claim with the passage number in square brackets, like [2]. "
+    "If the passages do not contain the answer, say you could not find it in the provided documents. "
+    "Do not use outside knowledge. Keep answers short."
+)
+
+
+def search(query: str, k: int = 5):
+    endpoint = os.environ["AZURE_SEARCH_ENDPOINT"].rstrip("/")
+    index = os.environ.get("AZURE_SEARCH_INDEX", "faa-docs")
+    r = requests.post(
+        f"{endpoint}/indexes/{index}/docs/search?api-version=2023-11-01",
+        headers={"api-key": os.environ["AZURE_SEARCH_KEY"], "Content-Type": "application/json"},
+        json={"search": query, "top": k, "select": "id,content,source,page", "queryType": "simple"},
+        timeout=20,
+    )
+    r.raise_for_status()
+    return r.json().get("value", [])
+
+
+def build_context(hits):
+    return "\n\n".join(
+        f"[{i}] (source: {h['source']}, page {h['page']})\n{h['content']}" for i, h in enumerate(hits, 1)
+    )
+
+
+def generate(question: str, hits) -> str:
+    model = os.environ.get("GEN_MODEL", "gemini-2.5-flash-lite")
+    r = requests.post(
+        f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+        headers={"x-goog-api-key": os.environ["GEMINI_API_KEY"], "Content-Type": "application/json"},
+        json={
+            "systemInstruction": {"parts": [{"text": SYSTEM}]},
+            "contents": [{"role": "user", "parts": [
+                {"text": f"Context passages:\n{build_context(hits)}\n\nQuestion: {question}"}]}],
+            "generationConfig": {"temperature": 0, "maxOutputTokens": 400},
+        },
+        timeout=30,
+    )
+    r.raise_for_status()
+    return r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+
+
+class DailyBudget:
+    """Process-wide daily cap on LLM calls so the free quota cannot be drained."""
+
+    def __init__(self, limit: int):
+        self.limit, self.day, self.n = limit, dt.date.today(), 0
+        self._lock = threading.Lock()
+
+    def take(self) -> bool:
+        with self._lock:
+            today = dt.date.today()
+            if today != self.day:
+                self.day, self.n = today, 0
+            if self.n >= self.limit:
+                return False
+            self.n += 1
+            return True
+
+
+budget = DailyBudget(int(os.environ.get("DAILY_LLM_LIMIT", "50")))
