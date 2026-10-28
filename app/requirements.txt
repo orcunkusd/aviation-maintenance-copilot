@@ -1,2 +1,3 @@
 streamlit==1.66.1
 requests>=2.31
+fastembed==0.9.1

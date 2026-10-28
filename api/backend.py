@@ -19,16 +19,9 @@ SYSTEM = (
 
 
 def search(query: str, k: int = 5):
-    endpoint = os.environ["AZURE_SEARCH_ENDPOINT"].rstrip("/")
-    index = os.environ.get("AZURE_SEARCH_INDEX", "faa-docs")
-    r = requests.post(
-        f"{endpoint}/indexes/{index}/docs/search?api-version=2023-11-01",
-        headers={"api-key": os.environ["AZURE_SEARCH_KEY"], "Content-Type": "application/json"},
-        json={"search": query, "top": k, "select": "id,content,source,page", "queryType": "simple"},
-        timeout=20,
-    )
-    r.raise_for_status()
-    return r.json().get("value", [])
+    from cloudsearch import search as cs
+    return cs.hybrid(os.environ["AZURE_SEARCH_ENDPOINT"], os.environ["AZURE_SEARCH_KEY"], query, k=k,
+                     index=os.environ.get("AZURE_SEARCH_INDEX", "faa-docs"))
 
 
 def build_context(hits):

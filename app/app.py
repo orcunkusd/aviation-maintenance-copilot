@@ -6,6 +6,8 @@ from pathlib import Path
 import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from cloudsearch import search as cs
 from cloud import cloud_backend as be
 
 ROOT = Path(__file__).parent
@@ -89,7 +91,7 @@ with right:
         else:
             try:
                 with st.spinner("Searching the documents..."):
-                    hits = be.search(endpoint, skey, q, k=5)
+                    hits = cs.hybrid(endpoint, skey, q, k=5)
             except Exception as e:
                 hits = []
                 st.error(f"Search failed: {type(e).__name__}")
@@ -112,4 +114,4 @@ with right:
             elif endpoint:
                 st.info("No matching passages found.")
 
-    st.caption("Retrieval here is keyword-based on Azure's free tier; the full hybrid + reranker pipeline and its evaluation are in the GitHub repo.")
+    st.caption("Retrieval: hybrid search (keyword + MiniLM vectors, fused with RRF) on Azure AI Search. The reranker and the full evaluation are in the GitHub repo.")
