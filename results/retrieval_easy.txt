@@ -1,0 +1,8 @@
+Method                    Hit@5  Hit@10    MRR
+Local keyword (BM25)      17/18   18/18   0.89
+Local vector (MiniLM)     18/18   18/18   0.76
+Local hybrid (RRF)        18/18   18/18   0.84
+Local hybrid + rerank     18/18   18/18   0.94
+Azure keyword             17/18   18/18   0.86
+Azure vector              18/18   18/18   0.76
+Azure hybrid              18/18   18/18   0.84

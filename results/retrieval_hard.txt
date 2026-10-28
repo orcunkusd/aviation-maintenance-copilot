@@ -1,0 +1,8 @@
+Method                    Hit@5  Hit@10    MRR
+Local keyword (BM25)       7/10    8/10   0.58
+Local vector (MiniLM)      7/10    9/10   0.66
+Local hybrid (RRF)         9/10    9/10   0.59
+Local hybrid + rerank     10/10   10/10   0.90
+Azure keyword              7/10    9/10   0.66
+Azure vector               7/10    9/10   0.66
+Azure hybrid               9/10    9/10   0.72
