@@ -3,17 +3,9 @@ import chromadb
 from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
 
-CHUNK_CHARS = 1000
-OVERLAP = 150
+from chunking import chunk_text
+
 BATCH = 2000
-
-
-def chunk_text(text):
-    chunks, start = [], 0
-    while start < len(text):
-        chunks.append(text[start:start + CHUNK_CHARS])
-        start += CHUNK_CHARS - OVERLAP
-    return chunks
 
 
 model = SentenceTransformer("all-MiniLM-L6-v2")

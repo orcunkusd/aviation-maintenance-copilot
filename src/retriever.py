@@ -1,11 +1,10 @@
-import re
 import chromadb
 from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
 
-def tokenize(text):
-    text = text.lower().replace("–", "-")  # AD numbers use en-dashes
-    return re.findall(r"[a-z0-9]+(?:-[a-z0-9]+)*", text)
+from fusion import rrf_fuse
+from textutil import tokenize  # noqa: F401  (re-exported for older scripts)
+
 
 class HybridRetriever:
     def __init__(self, path="data/chroma", collection="faa_docs"):
@@ -29,11 +28,10 @@ class HybridRetriever:
         return [self.ids[i] for i in order]
 
     def hybrid_search(self, query, k=5, pool=20, rrf_k=60):
-        fused = {}
-        for ranking in (self.vector_search(query, pool), self.keyword_search(query, pool)):
-            for rank, cid in enumerate(ranking):
-                fused[cid] = fused.get(cid, 0) + 1 / (rrf_k + rank + 1)
-        top = sorted(fused, key=fused.get, reverse=True)[:k]
+        top = rrf_fuse(
+            [self.vector_search(query, pool), self.keyword_search(query, pool)],
+            rrf_k=rrf_k, k=k,
+        )
         index = {cid: i for i, cid in enumerate(self.ids)}
         return [
             {"id": cid, "text": self.docs[index[cid]], "meta": self.metas[index[cid]]}

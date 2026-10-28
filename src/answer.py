@@ -1,16 +1,5 @@
-import sys
-from llm import generate
 import os
-
-from retriever import HybridRetriever
-
-USE_RERANK = os.environ.get("RERANK", "0") == "1"
-if USE_RERANK:
-    from rerank_retriever import RerankRetriever
-
-    retriever = RerankRetriever()
-else:
-    retriever = HybridRetriever()
+import sys
 
 SYSTEM = (
     "You are an aviation maintenance documentation assistant. "
@@ -20,14 +9,34 @@ SYSTEM = (
     "Do not use outside knowledge. Keep answers short."
 )
 
+_retriever = None
 
-def answer(question, k=5):
-    hits = retriever.search(question, k=k) if USE_RERANK else retriever.hybrid_search(question, k=k)
-    context = "\n\n".join(
+
+def get_retriever():
+    """Load the retriever on first use (RERANK=1 adds the cross-encoder)."""
+    global _retriever
+    if _retriever is None:
+        if os.environ.get("RERANK", "0") == "1":
+            from rerank_retriever import RerankRetriever
+            _retriever = RerankRetriever()
+        else:
+            from retriever import HybridRetriever
+            _retriever = HybridRetriever()
+    return _retriever
+
+
+def build_context(hits):
+    return "\n\n".join(
         f"[{i+1}] (source: {h['meta']['source']}, page {h['meta']['page']})\n{h['text']}"
         for i, h in enumerate(hits)
     )
-    text = generate(SYSTEM, f"Context passages:\n{context}\n\nQuestion: {question}")
+
+
+def answer(question, k=5):
+    from llm import generate
+    r = get_retriever()
+    hits = r.search(question, k=k) if hasattr(r, "search") else r.hybrid_search(question, k=k)
+    text = generate(SYSTEM, f"Context passages:\n{build_context(hits)}\n\nQuestion: {question}")
     return text, hits
 
 
