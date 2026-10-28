@@ -1,0 +1,15 @@
+[
+  {"q": "When should the bolts on a newly installed fixed-pitch propeller first be rechecked for tightness after flying begins?", "key": "25 hours", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 415, "type": "distractor"},
+  {"q": "How long should a repaired float hull hold water before it is judged free of leaks?", "key": "24 hours", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 427, "type": "paraphrase"},
+  {"q": "To what air pressure is a life preserver inflated when checking it for leaks?", "key": "2 psi", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 457, "type": "paraphrase"},
+  {"q": "As a general guideline, how far apart should two aircraft radio antennas be mounted?", "key": "36 inches", "answerable": true, "source": "AC_43.13-2B.pdf", "page": 26, "type": "paraphrase"},
+  {"q": "What clamping pressure is typical when gluing softwood with resorcinol adhesive?", "key": "125 to 150", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 41, "type": "distractor"},
+  {"q": "For an aircraft weighing less than 5,000 pounds empty, how large a change in weight is considered negligible?", "key": "one pound or less", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 468, "type": "distractor"},
+  {"q": "What is the narrowest tape allowed over a sewn seam running along the front edge of a fabric-covered wing?", "key": "4-inch", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 84, "type": "distractor"},
+  {"q": "How close to a pulley may a splice in a control cable be located?", "key": "2 inches", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 339, "type": "paraphrase"},
+  {"q": "How much zinc powder is mixed into a gallon of nitrate dope against mold if the maker gives no directions?", "key": "4 ounces", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 103, "type": "vocabulary"},
+  {"q": "At what moisture level can wood start to rot from fungus?", "key": "20 percent", "answerable": true, "source": "AC_43.13-1B.pdf", "page": 44, "type": "vocabulary"},
+  {"q": "What is the time between overhauls for a Continental IO-550 engine?", "key": "", "answerable": false},
+  {"q": "What is the maximum takeoff weight of an Embraer E190?", "key": "", "answerable": false}
+
+]

@@ -4,7 +4,7 @@ import os
 
 from retriever import HybridRetriever
 
-USE_RERANK = os.environ.get("RERANK", "1") == "1"
+USE_RERANK = os.environ.get("RERANK", "0") == "1"
 if USE_RERANK:
     from rerank_retriever import RerankRetriever
 
