@@ -22,16 +22,21 @@ class QuotaExhausted(Exception):
     pass
 
 
-def with_retry(fn, tries=3, wait=35):
+TRANSIENT = ("429", "RESOURCE_EXHAUSTED", "quota", "500", "502", "503", "504", "INTERNAL", "UNAVAILABLE",
+             "DEADLINE_EXCEEDED", "overloaded", "high demand", "timed out", "timeout", "Connection")
+
+
+def with_retry(fn, tries=5, wait=30):
+    """Retry quota and temporary-overload errors with growing waits; anything else is a real bug."""
     for attempt in range(tries):
         try:
             return fn()
         except Exception as exc:
             msg = str(exc)
-            if "429" in msg or "RESOURCE_EXHAUSTED" in msg or "quota" in msg.lower():
+            if any(t in msg for t in TRANSIENT):
                 if attempt == tries - 1:
                     raise QuotaExhausted(msg[:200])
-                time.sleep(wait)
+                time.sleep(wait * (attempt + 1))
             else:
                 raise
 
@@ -92,7 +97,7 @@ def ragas_scores(rows, model):
 
 
 def to_markdown(title, summaries, extra):
-    cols = ["n_answerable", "n_unanswerable", "retrieval_hit", "citation_correct",
+    cols = ["n_answerable", "n_unanswerable", "retrieval_hit", "key_in_passages", "citation_correct",
             "false_refusal", "correct_refusal", "avg_llm_calls", "avg_seconds"]
     lines = [f"### {title}", "", "| system | " + " | ".join(cols) + " |", "|---|" + "---|" * len(cols)]
     for name, s in summaries.items():
@@ -138,7 +143,7 @@ def main():
             summaries[name] = summarize(rows[name])
     except QuotaExhausted as exc:
         save_cache(cache)
-        print(f"\nGemini quota reached ({exc}). Progress is saved; run the same command again later.")
+        print(f"\nGemini quota or availability problem ({exc}). Progress is saved; run the same command again later.")
         return
 
     if args.show:

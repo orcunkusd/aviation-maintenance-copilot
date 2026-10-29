@@ -31,6 +31,14 @@ def citation_correct(text, hits, item):
     return any(1 <= n <= len(hits) and _match(hits[n - 1], item) for n in cited_numbers(text))
 
 
+def key_in_passages(hits, item):
+    """Strict check: does any retrieved passage contain the expected answer phrase?"""
+    key = " ".join((item.get("key") or "").lower().split())
+    if not key:
+        return None
+    return any(key in " ".join(h["text"].lower().split()) for h in hits)
+
+
 def score_row(item, text, hits):
     answerable = bool(item.get("answerable", True))
     refused = is_refusal(text)
@@ -39,6 +47,7 @@ def score_row(item, text, hits):
         "answerable": answerable,
         "refused": refused,
         "retrieval_hit": retrieval_hit(hits, item) if answerable else None,
+        "key_in_passages": key_in_passages(hits, item) if answerable else None,
         "citation_correct": (citation_correct(text, hits, item) and not refused) if answerable else None,
     }
 
@@ -55,6 +64,7 @@ def summarize(rows):
         "n_answerable": len(ans),
         "n_unanswerable": len(un),
         "retrieval_hit": _rate([r["retrieval_hit"] for r in ans]),
+        "key_in_passages": _rate([r.get("key_in_passages") for r in ans]),
         "citation_correct": _rate([r["citation_correct"] for r in ans]),
         "false_refusal": _rate([r["refused"] for r in ans]),
         "correct_refusal": _rate([r["refused"] for r in un]),

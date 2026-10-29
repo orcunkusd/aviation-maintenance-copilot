@@ -39,3 +39,39 @@ def test_other_errors_are_not_swallowed(monkeypatch):
 
     with pytest.raises(ValueError):
         cs.with_retry(boom)
+
+
+def test_temporary_overload_is_retried_then_succeeds(monkeypatch):
+    monkeypatch.setattr(cs.time, "sleep", lambda s: None)
+    calls = {"n": 0}
+
+    def flaky():
+        calls["n"] += 1
+        if calls["n"] < 3:
+            raise RuntimeError("503 UNAVAILABLE. This model is currently experiencing high demand.")
+        return "ok"
+
+    assert cs.with_retry(flaky) == "ok" and calls["n"] == 3
+
+
+def test_persistent_overload_stops_cleanly(monkeypatch):
+    monkeypatch.setattr(cs.time, "sleep", lambda s: None)
+
+    def down():
+        raise RuntimeError("503 UNAVAILABLE")
+
+    with pytest.raises(cs.QuotaExhausted):
+        cs.with_retry(down, tries=3)
+
+
+def test_deadline_exceeded_is_retried(monkeypatch):
+    monkeypatch.setattr(cs.time, "sleep", lambda s: None)
+    calls = {"n": 0}
+
+    def flaky():
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise RuntimeError("504 DEADLINE_EXCEEDED. Deadline expired before operation could complete.")
+        return "ok"
+
+    assert cs.with_retry(flaky) == "ok"

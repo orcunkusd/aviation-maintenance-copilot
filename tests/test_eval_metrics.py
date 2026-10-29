@@ -1,4 +1,4 @@
-from eval_metrics import (citation_correct, cited_numbers, expected_pages, is_refusal,
+from eval_metrics import (key_in_passages, citation_correct, cited_numbers, expected_pages, is_refusal,
                           retrieval_hit, score_row, summarize)
 
 
@@ -55,3 +55,13 @@ def test_comma_separated_citations_are_understood():
     assert cited_numbers("A [1][3] and B [2,3]") == [1, 2, 3]
     assert cited_numbers("no brackets 2, 4") == []
     assert cited_numbers("array[0] is not a citation list") == [0]  # digits in brackets count; harmless
+
+
+def test_key_in_passages_is_stricter_than_page_hit():
+    item = {"q": "q?", "answerable": True, "source": "AC.pdf", "pages": [10], "key": "no more than three"}
+    right_page_wrong_text = [{"id": "a", "text": "Other text on the page.", "meta": {"source": "AC.pdf", "page": 10}}]
+    right_text = [{"id": "b", "text": "Use  NO MORE\nthan three threads.", "meta": {"source": "AC.pdf", "page": 10}}]
+    assert retrieval_hit(right_page_wrong_text, item) is True
+    assert key_in_passages(right_page_wrong_text, item) is False
+    assert key_in_passages(right_text, item) is True
+    assert key_in_passages(right_text, {"q": "x"}) is None
