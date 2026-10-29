@@ -4,7 +4,7 @@ Cited answers from FAA maintenance documents. Hybrid retrieval (keyword + vector
 
 **Live demo:** https://aviation-maintenance-copilot-pmruk7g8qvwvyaeh8enqwy.streamlit.app/ &nbsp;|&nbsp; **API docs:** https://copilot-api.calmsmoke-858062be.francecentral.azurecontainerapps.io/docs (the `/ask` endpoint needs an API key)
 
-<!-- Add a screenshot or GIF of the demo here, for example: ![Demo](docs/demo.png) -->
+![Demo of the Aviation Maintenance Copilot answering a question with cited sources](docs/demo.png)
 
 ## The problem
 
