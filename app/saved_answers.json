@@ -1,0 +1,101 @@
+[
+  {
+    "question": "What is the minimum rivet spacing?",
+    "answer": "For single row rivets, the spacing should not be less than 3 times the diameter of the rivet [1]. For double, triple, or multiple row rivets, the spacing should not be less than the minimums shown in figure 4-5 [1].",
+    "model": "gemini-2.5-flash-lite",
+    "date": "2026-10-29",
+    "sources": [
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 159,
+        "content": "9/27/01 AC 43.13-1B CHG 1 \nc. Rivet edge distance is defined as the \ndistance from the center of the rivet hole to the \nnearest edge of the sheet.  Rivet spacing is the \ndistance from the center of the rivet hole to the \ncenter of the adjacent rivet hole. Unless \nstructural deficiencies are suspected, the rivet \nspacing and edge distance should duplicate \nthose of the original aircraft structure.  If \nstructural deficiencies are suspected, the fol­\nlowing may be used in determining minimum \nedge distance and rivet spacing. \n(1) For single row rivets, the edge dis­\ntance should not be less than 2 times the di­\nameter of the rivet and spacing should not be \nless than 3 times the diameter of the rivet. \n(2) For double row rivets, the edge dis­\ntance and spacing should not be less than the \nminimums shown in figure 4-5. \n(3) For triple or multiple row rivets, the \nedge distance and spacing should not be less \nthan the minimums shown in figure 4-5. \nd. The 2117 rivets  may be driven in the "
+      },
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 168,
+        "content": "117-T4 (AD) would \nbe satisfactory). \n(b) Use the number of rivets re­\nquired per inch of width “W” from table 4-10. \n(Number per inch 4.9 x .75 = 3.7 or the total \nnumber of rivets required = 10 x 3.7 or 37 riv­\nets.)  See notes in table. \n(c) Lay out rivet pattern with spacing \nnot less than shown in figure 4-5.  Referring to \nfigure 4-5(A), it seems that a double row pat­\ntern with the minimum spacing will give a to­\ntal of 40 rivets.  However, as only 37 rivets are \nrequired, two rows of 19 rivets each equally \nspaced over the10 inches will result in a satis­\nfactory splice. \nh. Straightening of Stringers or Inter­\nmediate Frames. Members which are slightly \nbent may be straightened cold and examined \nwith a magnifying glass for cracks or tears to \nthe material.  Reinforce the straightened part to \nits original shape, depending upon the condi­\ntion of the material and the magnitude of any \nremaining kinks or buckles.  If any strain \ncracks are apparent, make complete reinforce­\nmen"
+      },
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 161,
+        "content": "AC 43.13-1B 9/8/98 \nFIGURE 4-5. Rivet hole spacing and edge distance for single-lap sheet splices. \nPage 4-20 Par 4-57"
+      },
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 151,
+        "content": " joint is based upon the \nexpanded diameter of the rivet.  Therefore, it is \nimportant that the proper drill size be used for \neach rivet diameter. \nPar 4-50 Page 4-11"
+      },
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 172,
+        "content": "9/8/98 AC 43.13-1B \nNOTE:  FOR MINIMUM NUMBER OF RIVETS REQUIRED, SEE PARAGRAPH 4-58g \nAND SUBSEQUENT. \nFIGURE 4-15. Typical repairs of trailing edges. \nPar 4-58 Page 4-31"
+      }
+    ]
+  },
+  {
+    "question": "How is corrosion on aluminum alloy removed?",
+    "answer": "Corrosion can be removed using a corrosion removal compound like MIL-C-38334, which is an acid material [1]. When corrosion is found around a fastener, the fastener must be removed to ensure complete corrosion removal [2].",
+    "model": "gemini-2.5-flash-lite",
+    "date": "2026-10-29",
+    "sources": [
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 296,
+        "content": "aluminum surface. \n(2) Chemical Corrosion Removal. \n(a) The corrosion removal compound \naluminum pretreatment MIL-C-38334, an acid \nmaterial, may be used to remove corrosion \nproducts from aluminum alloy materials or \nitems (e.g., skins, stringer, ribs in wings, tub­\ning, or ducts).  MIL-C-38334 is available in \ntwo types: \n1 Type I Liquid concentrate mate­\nrials should be diluted in accordance with the \nPage 6-26 Par 6-135"
+      },
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 296,
+        "content": "AC 43.13-1B 9/8/98 \n6-135. CORROSION REMOV AL \nAROUND COUNTERSUNK FASTENERS \nIN ALUMINUM ALLOY.  Intergranular cor­\nrosion in aluminum alloys often originates at \ncountersunk areas where steel fasteners are \nused. \na. When corrosion is found  around a \nfixed fastener head, the fastener must be re­\nmoved to ensure corrosion removal.  All cor­\nrosion must be removed to prevent further cor­\nrosion and loss of structural strength.  To re­\nduce the recurrence of corrosion, the panel \nshould receive a chemical conversion coating, \nbe primed, and have the fasteners installed wet \nwith sealant. \nb. Each time  removable steel fasteners \nare removed from access panels, they should \nbe inspected for condition of the plating. If \nmechanical or plating damage is evident, re­\nplace the fastener.  One of the following fas­\ntener installation methods should be used: \n(1) Brush a corrosion-preventive com­\npound on the substructure around and in the \nfastener hole, start the fastener, apply a bead of \ns"
+      },
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 295,
+        "content": " surface treatment of aluminum \nalloy surfaces.  The aluminum sheet or casting \nis made the positive pole in an electrolyte bath \nin which chromic acid or other oxidizing \nagents produce a supplemental protective ox­\nide film on the aluminum surface. The ano­\ndized surface coating offers the alloy a great \ndeal of protection as long as it is not damaged. \nOnce the film is damaged, it can only be par­\ntially restored by chemical surface treatment. \nTherefore exercise care to avoid breaking of \nthe protective film, particularly at the edges of \nthe sheet. \n6-134. REPAIR OF ALUMINUM ALLOY \nSHEET METAL. After extensive corrosion \nremoval the following procedures should be \nfollowed: \na. If water can be trapped in blended ar­\neas, chemical conversion coat in accordance \nwith MIL-C-81706 and fill the blended area \nwith structural adhesive or sealant to the same \nlevel and contour as the original skin.  When \nareas are small enough that structural strength \nhas not been significantly decrease"
+      },
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 295,
+        "content": "9/8/98 AC 43.13-1B \nSECTION 8.  ALUMINUM AND ALUMINUM ALLOYS\n \n6-132. GENERAL. Aluminum and alumi­\nnum alloys are the most widely used material \nfor aircraft construction. Aluminum appears \nhigh in the electro-chemical series of elements \nand corrodes very easily.  However, the forma­\ntion of a tightly-adhering oxide film offers in­\ncreased resistance under most corrosive condi­\ntions. Most metals in contact with aluminum \nform couples that undergo galvanic corrosion \nattack.  The alloys of aluminum are subject to \npitting, intergranular corrosion and inter-\ngranular stress corrosion cracking.  In some \ncases the corrosion products of metal in con­\ntact with aluminum are corrosive to aluminum. \nTherefore, aluminum and its alloys must be \ncleaned and protected. \n6-133. SPECIAL TREATMENT OF \nANODIZED SURFACES.  Anodizing is the \nmost common surface treatment of aluminum \nalloy surfaces.  The aluminum sheet or casting \nis made the positive pole in an electrolyte bath \nin which chromic aci"
+      },
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 283,
+        "content": "AC 43.13-1B 9/8/98 \nbrass, copper, or steel. This treatment cannot \nbe used with parts containing aluminum inserts \nor fasteners because the high alkalinity of the \nbath attacks the aluminum. \n6-36. GALV ANIC ANODIZING TREAT-\nMENT. An electrolytic process that provides \na paint base and corrosion-preventive film on \nmagnesium alloys containing manganese. \n6-37. CLADDING . Aluminum alloys which \nare susceptible to corrosion are frequently clad \nwith pure aluminum. Slight pits, scratches, or \nother defects through the cladding material \nmust be avoided, since the aluminum alloy \ncore will corrode rapidly. \n6-38. METAL SPRAYING . Metal is melted \nand sprayed on the surface to be protected. \nThe surface must be properly prepared and \nthoroughly cleaned to prevent peeling of the \nsprayed coat. \n6-39. SHOT-PEENING . Shot-peening and \nother treatments, by which the surface can be \nplaced in compression, are effective in pre­\nventing stress corrosion. \n6-40. ORGANIC COATINGS. Zinc chro­\nmate p"
+      }
+    ]
+  },
+  {
+    "question": "How close to a pulley may a splice in a control cable be located?",
+    "answer": "No portion of the splice may come closer than 2 inches to any fair-lead or pulley [1].",
+    "model": "gemini-2.5-flash-lite",
+    "date": "2026-10-29",
+    "sources": [
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 339,
+        "content": ") \na. Location of Splices.  Locate splices so \nthat no portion of the splice comes closer than \n2 inches to any fair-lead or pulley. Locate \nconnections at points where jamming cannot \noccur during any portion of the travel of either \nthe loaded cable or the slack cable in the de­\nflected position. \nb. Cutting and Heating. Cut cables to \nlength by mechanical means.  The use of a \ntorch, in any manner, is not permitted.  Do not \nsubject wires and cables to excessive tem­\nperature. Soldering the bonding braid to the \ncontrol cable is not permitted. \nc. Ball-and-Socket Type Terminals.  Do \nnot use ball-and-socket type terminals or other \ntypes for general replacement that do not posi­\ntively prevent cable untwisting, except where \nthey were utilized on the original installation \nby the aircraft manufacturer. \nd. Substitution of Cable. Substitution of \ncable for hard or streamlined wires will not be \nacceptable unless specifically approved by a \nrepresentative of the FAA. \n7-148. MECHANICA"
+      },
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 347,
+        "content": "AC 43.13-1B 9/8/98 \nFIGURE 7-20. Pulley wear patterns. \nn. Inspect fair-leads for wear, breakage, \nalignment, cleanliness, and security.  Examine \ncable routing at fair-leads to ensure that defec­\ntion angles are no greater than 3°€ maximum. \nDetermine that all guides and anti-abrasion \nstrips are secure and in good condition. \no. Examine pressure seals for wear and/or \nmaterial deterioration. Seal guards should be \npositioned to prevent jamming of a pulley in \ncase pressure seal fails and pieces slide along \nthe cable. \n7-150. CORROSION AND RUST PRE -\nVENTION.  To ensure a satisfactory service \nlife for aircraft control cables, use a cable lu­\nbricant to reduce internal friction and prevent \ncorrosion. \na. If the cable is made from tinned steel, \ncoat the cable with rust-preventive oil, and \nwipe off any excess.  It should be noted that \ncorrosion-resistant steel cable does not require \nthis treatment for rust prevention. \nb. Lubrication and corrosion preventive \ntreatment of carbon s"
+      },
+      {
+        "source": "AC_43.13-2B.pdf",
+        "page": 41,
+        "content": " Not Use 5/32\" Do Not Use 3/4\" \n \n(a) Make check cable, safety cable, \nand crust-cutting cable ends by the splice, swage, or \nnicopress methods. Cable clamps may be used if \nadjustable lengths are desired, but they are not \nrecommended. Use standard airplane hardware only. \n(Hardware used to attach cables must be compatible \nwith cable size.)  Refer to AC 43.13-1, chapter 7, as \namended, for more information on cable fabrication. \n(b) Shock cord ends may be \nfabricated by any of the following methods: \n1. Make a wrapped splice \nusing a proper size rope thimble and No. 9 cotton \ncord, 0.041\" (minimum) safety wire (ref. National \nAerospace Standard NASM20995), 1025 steel, or its \nequivalent (AISI 4130).  Attach with clevis or spring \nsteel snap fastener. (Do not use cast iron snaps.) \n2. Use approved spring-type \nshock cord end fasteners, 1025 steel, or its \nequivalent (AISI 4130). \n(c) Fitting (Figure 5-3) \nSpecifications and Installation: \n1. Fittings fabricated for 1/8-\ninch cable or "
+      },
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 97,
+        "content": "he long ends of the cords are then pulled until \nthe knot is tight.  The short ends are cut close to \nthe knot. This finishes the splice knot. \nFIGURE 2-10. Splice knot. \n2-11. STITCH SPACING . \na. Rib lace spacing on wings,  formerly \nreferred to as stitch spacing, should be no \ngreater than the spacing used by the original \naircraft manufacturer.  When the original \nspacing cannot be determined the maximum \nspacing illustrated in figure 2-12 should be \nused on the wings and wing control surfaces. \nPar 2-10 Page 2-19"
+      },
+      {
+        "source": "AC_43.13-1B.pdf",
+        "page": 346,
+        "content": "nd subsequent failure.  Check turn­\nbuckles for proper thread exposure and broken \nor missing safety wires/clips. \nl. Inspect pulleys for roughness, sharp \nedges, and presence of foreign material em­\nbedded in the grooves.  Examine pulley bear­\nings to ensure proper lubrication, smooth rota­\ntion; and freedom from flat spots, dirt, and \npaint spray.  During the inspection, rotate the \npulleys, which only turn through a small arc, to \nprovide a new bearing surface for the cable. \nMaintain pulley alignment to prevent the cable \nfrom riding on the flanges and chafing against \nguards, covers, or adjacent structure.  Check \nall pulley brackets and guards for damage, \nalignment, and security. \nm. Various cable system malfunctions \nmay be detected by analyzing pulley condi­\ntions. These include such discrepancies as too \nmuch tension, misalignment, pulley bearing \nproblems, and size mismatches between cables \nand pulleys.  Examples of these condition are \nshown in figure 7-20. \nPar 7-149 Page"
+      }
+    ]
+  }
+]

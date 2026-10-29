@@ -9,8 +9,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from cloudsearch import search as cs
 from cloud import cloud_backend as be
+import saved_answers as sa
 
 ROOT = Path(__file__).parent
+SAVED = sa.load(ROOT / "saved_answers.json")
 st.set_page_config(page_title="Aviation Maintenance Copilot", page_icon="✈️", layout="wide",
                    initial_sidebar_state="collapsed")
 
@@ -77,7 +79,7 @@ with left:
 with right:
     st.subheader("Ask the manuals")
     examples = ["What is the minimum rivet spacing?", "How is corrosion on aluminum alloy removed?",
-                "What are the torque values for AN bolts?"]
+                "How close to a pulley may a splice in a control cable be located?"]
     cols = st.columns(len(examples))
     for c, ex in zip(cols, examples):
         if c.button(ex, use_container_width=True):
@@ -97,6 +99,7 @@ with right:
                 st.error(f"Search failed: {type(e).__name__}")
             if hits:
                 used_llm = False
+                saved = sa.find(SAVED, q)
                 if gkey and st.session_state.get("n", 0) < 5 and budget().take():
                     st.session_state["n"] = st.session_state.get("n", 0) + 1
                     try:
@@ -104,12 +107,21 @@ with right:
                             st.markdown(be.generate(gkey, q, hits))
                         used_llm = True
                     except Exception:
-                        st.info("The free language-model quota is busy. Showing the retrieved passages instead.")
-                elif gkey:
+                        if not saved:
+                            st.info("The free language-model quota is busy. Showing the retrieved passages instead.")
+                elif gkey and not saved:
                     st.info("Free-tier AI quota reached for now. Showing retrieved passages (the retrieval is the core of the system).")
-                st.markdown("**Sources**" if used_llm else "**Top passages**")
-                for i, h in enumerate(hits, 1):
-                    with st.expander(f"[{i}] {h['source']} · page {h['page']}", expanded=not used_llm and i == 1):
+                saved = None if used_llm else saved
+                shown = hits
+                if saved:
+                    st.info(f"The free language-model quota is used up for now. This is a saved answer, generated on "
+                            f"{saved['date']} with {saved['model']}. Type your own question to see live passages.")
+                    st.markdown(saved["answer"])
+                    shown = [{"source": d["source"], "page": d["page"], "content": d["content"]} for d in saved["sources"]]
+                st.markdown("**Sources**" if (used_llm or saved) else "**Top passages**")
+                for i, h in enumerate(shown, 1):
+                    with st.expander(f"[{i}] {h['source']} · page {h['page']}",
+                                     expanded=not used_llm and not saved and i == 1):
                         st.write(h["content"])
             elif endpoint:
                 st.info("No matching passages found.")
