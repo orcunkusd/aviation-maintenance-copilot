@@ -79,7 +79,7 @@ The baseline is the production pipeline. The agent matched it on the development
 ### 3. Deployed service
 
 - API answers in about 3 s end to end including the model call (two measurements on Azure Container Apps, hybrid retrieval).
-- 59 automated tests run in CI on every push.
+- 63 automated tests run in CI on every push.
 - Cost: €0 on free tiers (Azure AI Search free, Container Apps free grant with scale to zero, Streamlit Community Cloud, Gemini free tier).
 
 ## Mistakes found and fixed
@@ -93,7 +93,7 @@ The baseline is the production pipeline. The agent matched it on the development
 
 - Small evaluation sets over a small corpus of five documents (two advisory circulars and three Cessna directives). Results are indicative, not statistically conclusive.
 - Answer-level quality was checked with page citations and the answer phrase, not with a large human-labelled set. [Add RAGAS scores here only if you run them.]
-- The live demo uses Gemini's free tier. When the daily quota is used up, it shows the retrieved passages without a written answer.
+- The live demo uses Gemini's free tier. When the daily quota is used up, the three example questions show clearly labelled saved answers (generated earlier with the same pipeline), and any other question shows the retrieved passages without a written answer.
 - No real user data and no measurement of time saved. This is a portfolio system, not a production deployment.
 - The agent has a known retry flaw (see above).
 
@@ -123,7 +123,7 @@ api/           FastAPI service
 cloudsearch/   hybrid search against Azure AI Search (no PyTorch)
 app/           Streamlit demo page and 3D guide
 scripts/       one-off experiments and checks
-tests/         59 tests (no keys, models or internet needed)
+tests/         63 tests (no keys, models or internet needed)
 results/       raw evaluation outputs used in this README
 data/eval/     question sets (easy, hard, held-out)
 ```
