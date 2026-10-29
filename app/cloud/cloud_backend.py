@@ -21,6 +21,20 @@ def search(endpoint: str, key: str, query: str, k: int = 5, index: str = "faa-do
     return r.json().get("value", [])
 
 
+def _generation_config(model):
+    cfg = {"temperature": 0, "maxOutputTokens": 800}
+    if model.startswith("gemini-2.5"):
+        cfg["thinkingConfig"] = {"thinkingBudget": 0}   # thinking tokens would eat the answer budget
+    return cfg
+
+
+def _extract_text(data):
+    cand = data["candidates"][0]
+    if cand.get("finishReason") == "MAX_TOKENS":
+        raise ValueError("answer was truncated")        # callers fall back to the retrieved passages
+    return cand["content"]["parts"][0]["text"].strip()
+
+
 def generate(api_key: str, question: str, hits, model: str = "gemini-2.5-flash-lite") -> str:
     ctx = "\n\n".join(f"[{i}] ({h['source']} p.{h['page']}) {h['content']}" for i, h in enumerate(hits, 1))
     r = requests.post(
@@ -28,10 +42,10 @@ def generate(api_key: str, question: str, hits, model: str = "gemini-2.5-flash-l
         headers={"x-goog-api-key": api_key, "Content-Type": "application/json"},
         json={"systemInstruction": {"parts": [{"text": SYSTEM}]},
               "contents": [{"role": "user", "parts": [{"text": f"Context:\n{ctx}\n\nQuestion: {question}"}]}],
-              "generationConfig": {"temperature": 0, "maxOutputTokens": 400}},
+              "generationConfig": _generation_config(model)},
         timeout=30)
     r.raise_for_status()
-    return r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+    return _extract_text(r.json())
 
 
 class DailyBudget:
